@@ -1,0 +1,7 @@
+library(UsingR)
+data(father.son)
+names(father.son)
+hist(x, xlim = c(40, 100))
+var(x)
+sd(x)
+sd(x)/sqrt(n)

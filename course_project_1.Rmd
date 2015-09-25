@@ -1,0 +1,73 @@
+##**Statistical Inference Course Project Part1**##
+
+*Haimo Liu, Sep.22th 2015*
+
+###**Overview**###
+
+In this project I will investigate the exponential distribution in R and compare it with the Central Limit Theorem. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda, where lambda is the rate parameter. I will investigate the distribution of averages of 40 exponentials within a thousand simulations.
+
+```{r}
+library(ggplot2)
+```
+
+###**Simulations**###
+
+First we create a matrix with 1000 simulations, each simulation contains 40 samples of expotential distributions with lambda = 0.2. 
+
+```{r}
+sim = 1000
+lambda = 0.2
+n = 40
+set.seed(10)
+data = matrix(rexp(n*sim, lambda), sim);
+```
+
+Next, we calculate the mean of each simulation, and plot the distribution of the 1000 mean values
+
+```{r}
+mean_data = apply(data, 1, mean)
+hist(mean_data)
+```
+
+
+###**Show the sample mean and compare it to the theoretical mean of the distribution**###
+
+The theoretical mean of the distribution is **1/lambda = 5**. And sample mean is
+
+```{r}
+mean(mean_data)
+```
+
+###**Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution**###
+
+The theoretical variance of the distribution is **1/((lambda)^2xn) = 0.625**. And the sample variance is:
+
+```{r}
+var(mean_data)
+```
+
+
+###**Show the distribution is approximately normal**###
+
+First, let's look at the shape of the data:
+
+```{r}
+plot = data.frame(mean_data);
+k = ggplot(plot, aes(x =mean_data)) 
+k = k + geom_histogram(aes(y=..density..), colour="black",fill = "Blue")
+k + geom_density(colour="Orange", size=2)
+```
+
+Next, let's compare the 95% confidence interval to that of a normal distribution
+
+```{r}
+con_interval_upper_bond = round (mean(mean_data) + 1.96*sd(mean_data)/sqrt(n),3)
+theo_interval_upper_bond = 5 + 1.96*sqrt(0.625)/sqrt(n)
+print(paste('Actual 95% confidence interval upper bond is', con_interval_upper_bond))
+print(paste('Theoretical 95% confidence interval upper bond is', theo_interval_upper_bond))
+```
+
+
+
+
+

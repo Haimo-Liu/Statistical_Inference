@@ -1,0 +1,91 @@
+##**Statistical Inference Course Project Part2**##
+
+*Haimo Liu, Sep.25th 2015*
+
+###**Overview**###
+
+In this project I will investigate the ToothGrowth data, perform some exploratory analysis followed by a detailed statistical analysis.
+
+Load some libraries globally
+
+```{r}
+library(datasets)
+library(reshape2)
+library(ggplot2)
+```
+
+###**Exploratory Analysis**###
+
+First let's take a close look at the dataset.
+
+```{r}
+data(ToothGrowth)
+str(ToothGrowth)
+summary(ToothGrowth)
+```
+
+Next, re-shape the data frame, display length per supplement type and dose level
+
+```{r}
+mtooth = melt(ToothGrowth, id.vars = c('supp', 'dose'), measure.vars = 'len')
+head(mtooth)
+```
+
+Mean length at each dose level per supplement is: 
+
+```{r}
+dcast(mtooth, supp + dose ~ variable, mean)
+```
+
+Graphically:
+
+```{r}
+ggplot(aes(x=supp, y=len), data=ToothGrowth) + geom_boxplot(aes(fill=supp))+ 
+    xlab("Supplement") +ylab("Tooth Length")
+```
+
+
+###**Statistical Inference**###
+
+First, I'll try to use hypothesis tests to compare tooth growth by supplement.
+
+```{r}
+t.test(ToothGrowth$len[ToothGrowth$supp=='OJ'], ToothGrowth$len[ToothGrowth$supp=='VC'], paired = FALSE, var.equal = FALSE)
+```
+
+As indicated by the test, value 0 is contained within the 95% confidence interval, which means that we don't have enough evidence to conclude that different types of supplement have impact on tooth length.
+
+Now Let's perform the same test at different dose level. First 0.5mg vs. 1mg:
+
+```{r}
+t.test(ToothGrowth$len[ToothGrowth$dose==0.5], ToothGrowth$len[ToothGrowth$dose==1], paired = FALSE, var.equal = TRUE)
+```
+
+Next, 1mg vs. 2mg:
+
+```{r}
+t.test(ToothGrowth$len[ToothGrowth$dose==1], ToothGrowth$len[ToothGrowth$dose==2], paired = FALSE, var.equal = TRUE)
+
+```
+
+For both cases, the confidence intervals don't contain 0, meaning that different does levels have significant impact on tooth length.
+
+
+###**Conclusions**###
+
+Supplement type has no effect on tooth growth while increasing the dose level leads to increased tooth growth. Notice that we have made the following assumptions in order to reach to the aforementioned conclusion:
+
+1. We assumed that Guinea pigs were not paired in the dataset
+2. We assumed that 60 observations are enough to generalize the conclusion to the population
+3. We also assumed that supplement type don't have impact while evaluating impact of dose levels on tooth growth.
+
+
+
+
+
+
+
+
+
+
+
